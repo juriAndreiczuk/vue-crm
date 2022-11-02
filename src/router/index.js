@@ -1,11 +1,59 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: HomeView
+    meta: { layout: 'main-layout', sidebar: true },
+    component: () => import('@/views/HomeView.vue')
+  },
+  {
+    path: '/register',
+    name: 'register',
+    meta: { layout: 'auth-layout', sidebar: false },
+    component: () => import('@/views/RegisterView.vue')
+  },
+  {
+    path: '/login',
+    name: 'login',
+    meta: { layout: 'auth-layout', sidebar: false },
+    component: () => import('@/views/LoginView.vue')
+  },
+  {
+    path: '/categories',
+    name: 'categories',
+    meta: { layout: 'main-layout', sidebar: true },
+    component: () => import('@/views/CategoriesView.vue')
+  },
+  {
+    path: '/record',
+    name: 'record',
+    meta: { layout: 'main-layout', sidebar: true },
+    component: import('@/views/RecordView.vue')
+  },
+  {
+    path: '/detail',
+    name: 'detail',
+    meta: { layout: 'main-layout', sidebar: true },
+    component: import('@/views/DetailView.vue')
+  },
+  {
+    path: '/profile',
+    name: 'profile',
+    meta: { layout: 'main-layout', sidebar: true },
+    component: import('@/views/ProfileView.vue')
+  },
+  {
+    path: '/planning',
+    name: 'planning',
+    meta: { layout: 'main-layout', sidebar: true },
+    component: import('@/views/PlanningView.vue')
+  },
+  {
+    path: '/history',
+    name: 'history',
+    meta: { layout: 'main-layout', sidebar: true },
+    component: import('@/views/HistoryView.vue')
   }
 ]
 
