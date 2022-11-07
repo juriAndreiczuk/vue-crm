@@ -92,7 +92,10 @@
           email: this.email,
           password: this.password
         }
-        console.log(formData)
+        try {
+          await this.$store.dispatch('login', formData)
+          this.$router.push('/')
+        } catch (e) { }
       }
     },
     mounted() {
