@@ -95,6 +95,7 @@
         try {
           await this.$store.dispatch('login', formData)
           this.$router.push('/')
+          this.$store.dispatch('getUid')
         } catch (e) { }
       }
     },

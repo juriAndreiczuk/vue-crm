@@ -131,7 +131,12 @@
           password: this.password,
           name: this.name
         }
-        console.log(formData)
+        try {
+          await this.$store.dispatch('register', formData)
+          this.$router.push('/login')
+        } catch(e) {
+          console.log(e)
+        }
       }
     }
   }

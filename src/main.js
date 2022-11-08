@@ -15,7 +15,8 @@ const options = {
   projectId: 'crmvue-1f01e',
   storageBucket: 'crmvue-1f01e.appspot.com',
   messagingSenderId: '610314952544',
-  appId: '1:610314952544:web:68e6ff6215283afb774805'
+  appId: '1:610314952544:web:68e6ff6215283afb774805',
+  databaseURL: 'https://crmvue-1f01e-default-rtdb.europe-west1.firebasedatabase.app'
 }
 const fireApp = initializeApp(options)
 const auth = getAuth();
