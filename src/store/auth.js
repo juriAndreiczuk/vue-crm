@@ -12,11 +12,12 @@ import {
 
 export default {
   actions: {
-    async login({}, {email, password}) {
+    async login({commit}, {email, password}) {
       try {
         const auth = getAuth()
-        await signInWithEmailAndPassword(auth, email, password)
+        return await signInWithEmailAndPassword(auth, email, password)
       } catch(e) {
+        commit('setError', e)
         throw e
       }
     },
@@ -24,7 +25,7 @@ export default {
       const auth = getAuth()
       await signOut(auth)
     },
-    async register({dispatch}, {email, password, name }) {
+    async register({dispatch, commit}, {email, password, name }) {
       try {
         const auth = getAuth()
         await createUserWithEmailAndPassword(auth, email, password)
@@ -35,6 +36,7 @@ export default {
           bill: 1000
         });
       } catch(e) {
+        commit('setError', e)
         throw e
       }
     },

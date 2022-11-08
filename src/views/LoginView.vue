@@ -93,9 +93,9 @@
           password: this.password
         }
         try {
-          await this.$store.dispatch('login', formData)
-          this.$router.push('/')
+          const login = await this.$store.dispatch('login', formData)
           this.$store.dispatch('getUid')
+          this.$router.push('/')
         } catch (e) { }
       }
     },
