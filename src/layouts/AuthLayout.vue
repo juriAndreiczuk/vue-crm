@@ -14,7 +14,8 @@
     },
     watch: {
       error(e) {
-        this.$message(e.message)
+        this.$error(e.message)
+        this.$store.commit('clearError')
       }
     }
   }
