@@ -21,9 +21,10 @@ export default {
         throw e
       }
     },
-    async logout() {
+    async logout({commit}) {
       const auth = getAuth()
       await signOut(auth)
+      commit('clearInfo')
     },
     async register({dispatch, commit}, {email, password, name }) {
       try {
@@ -44,6 +45,6 @@ export default {
       const auth = getAuth()
       const user = auth.currentUser
       return user ? user.uid : null
-    },
+    }
   }
 }

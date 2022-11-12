@@ -7,6 +7,7 @@ import messagePlugin from './utils/message.plugin'
 import 'materialize-css/dist/js/materialize.min.js'
 import { initializeApp } from 'firebase/app'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import Loader from '@/components/app/Loader'
 
 let app
 const options = {
@@ -26,6 +27,7 @@ onAuthStateChanged(auth, (user) => {
       .use(store)
       .use(router)
       .use(messagePlugin)
+      .component('Loader', Loader)
       .mount('#app')
   }
 });

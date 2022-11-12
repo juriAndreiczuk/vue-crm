@@ -19,7 +19,7 @@
             data-target="dropdown"
             ref="trigger"
           >
-            USER NAME
+            {{name}}
             <i class="material-icons right">arrow_drop_down</i>
           </a>
 
@@ -60,6 +60,11 @@ export default {
       date: new Date(),
       timer: null,
       dropdown: null
+    }
+  },
+  computed: {
+    name(){
+      return this.$store.getters.info.name
     }
   },
   methods: {
