@@ -87,7 +87,7 @@
     methods: {
       async onSubmit () {
         const isFormCorrect = await this.v$.$validate()
-        if (!isFormCorrect) return
+        if (!isFormCorrect) return false
         const formData = { 
           email: this.email,
           password: this.password
