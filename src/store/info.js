@@ -2,7 +2,8 @@ import {
   getDatabase,
   ref,
   get,
-  child
+  child,
+  update
 } from 'firebase/database'
 
 export default {
@@ -25,7 +26,25 @@ export default {
         const info = await get(child(dbRef, `users/${uid}/info`))
         commit('setInfo', info.val()) 
       } catch (e) {
-
+        commit('setErro', e)
+        throw e
+      }
+    },
+    async updateInfo({dispatch, commit, getters}, toUpdate) {
+      try {
+        const uid = await dispatch('getUid')
+        const db = getDatabase()
+        const updates = {}  
+        const updateData = {
+          ...getters.info, 
+          ...toUpdate
+        }
+        updates[`users/${uid}/info`] = updateData
+        update(ref(db), updates)
+        commit('setInfo', updateData)
+      } catch (e) {
+        commit('setError', e)
+        throw e
       }
     }
   },

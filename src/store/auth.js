@@ -35,7 +35,7 @@ export default {
         set(ref(db, `users/${uid}/info`), {
           name,
           bill: 1000
-        });
+        })
       } catch(e) {
         commit('setError', e)
         throw e

@@ -13,7 +13,7 @@ export default {
       try {
         const uid = await dispatch('getUid')
         const db = getDatabase()
-        const newCategorytKey = push(child(ref(db), `users/${uid}/categories`)).key;
+        const newCategorytKey = push(child(ref(db), `users/${uid}/categories`)).key
         const updates = {}
         updates[`users/${uid}/categories/${newCategorytKey}`] = {title, limit}
         update(ref(db), updates)

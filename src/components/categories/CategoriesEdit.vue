@@ -60,7 +60,7 @@
 
 <script>
 import { useVuelidate } from '@vuelidate/core'
-import { required, minValue} from '@vuelidate/validators'
+import { required, minValue } from '@vuelidate/validators'
 import messages from '@/utils/messages'
 
 export default {
