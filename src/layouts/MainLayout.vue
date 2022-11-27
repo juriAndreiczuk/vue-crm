@@ -38,6 +38,19 @@ export default {
       await this.$store.dispatch('fetchInfo')
     }
   },
+  computed: {
+    error() {
+      return this.$store.getters.error
+    }
+  },
+  watch: {
+    error(e) {
+      if(e && e.message) {
+        this.$error(e.message)
+      }
+      this.$store.commit('clearError')
+    }
+  },
   components: {
     Navbar,
     Sidebar

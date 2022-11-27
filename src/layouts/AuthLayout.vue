@@ -14,7 +14,9 @@
     },
     watch: {
       error(e) {
-        this.$error(e.message)
+        if(e && e.message) {
+          this.$error(e.message)
+        }
         this.$store.commit('clearError')
       }
     }

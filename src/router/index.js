@@ -1,10 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { getAuth } from 'firebase/auth'
 
 const routes = [
   {
     path: '/',
     name: 'home',
-    meta: { layout: 'main-layout', sidebar: true },
+    meta: { 
+      layout: 'main-layout',
+      sidebar: true,
+      auth: true
+     },
     component: () => import('@/views/HomeView.vue')
   },
   {
@@ -22,37 +27,61 @@ const routes = [
   {
     path: '/categories',
     name: 'categories',
-    meta: { layout: 'main-layout', sidebar: true },
+    meta: { 
+      layout: 'main-layout',
+      sidebar: true,
+      auth: true
+     },
     component: () => import('@/views/CategoriesView.vue')
   },
   {
     path: '/record',
     name: 'record',
-    meta: { layout: 'main-layout', sidebar: true },
+    meta: { 
+      layout: 'main-layout',
+      sidebar: true,
+      auth: true
+     },
     component: import('@/views/RecordView.vue')
   },
   {
     path: '/detail',
     name: 'detail',
-    meta: { layout: 'main-layout', sidebar: true },
+    meta: { 
+      layout: 'main-layout',
+      sidebar: true,
+      auth: true
+     },
     component: import('@/views/DetailView.vue')
   },
   {
     path: '/profile',
     name: 'profile',
-    meta: { layout: 'main-layout', sidebar: true },
+    meta: { 
+      layout: 'main-layout',
+      sidebar: true,
+      auth: true
+     },
     component: import('@/views/ProfileView.vue')
   },
   {
     path: '/planning',
     name: 'planning',
-    meta: { layout: 'main-layout', sidebar: true },
+    meta: { 
+      layout: 'main-layout',
+      sidebar: true,
+      auth: true
+     },
     component: import('@/views/PlanningView.vue')
   },
   {
     path: '/history',
     name: 'history',
-    meta: { layout: 'main-layout', sidebar: true },
+    meta: { 
+      layout: 'main-layout',
+      sidebar: true,
+      auth: true
+     },
     component: import('@/views/HistoryView.vue')
   }
 ]
@@ -60,6 +89,14 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
+})
+
+router.beforeEach(async (to, from, next) => {
+  const auth = getAuth()
+  if(to.meta.auth && !auth.currentUser) {
+    next('/login?=login')
+  } 
+  next()
 })
 
 export default router
