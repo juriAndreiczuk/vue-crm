@@ -1,5 +1,6 @@
 import { 
   getDatabase,
+  get,
   ref,
   child,
   push,
@@ -16,6 +17,22 @@ export default {
         updates[`users/${uid}/records/${newCategorytKey}`] = record
         update(ref(db), updates)
         return record
+      } catch(e) {
+        commit('setError', e)
+        throw error
+      }
+    },
+    async fetchRecords({dispatch, commit}) {
+      try {
+        const uid = await dispatch('getUid')
+        const db = ref(getDatabase())
+        const records = await get(child(db, `users/${uid}/records`))
+        if(records.val()) {
+          const val = records.val()
+          return Object.keys(val).map(key => ({...val[key], key}))
+        } else {
+          return []
+        }
       } catch(e) {
         commit('setError', e)
         throw error

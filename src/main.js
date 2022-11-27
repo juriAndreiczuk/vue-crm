@@ -5,6 +5,8 @@ import router from './router'
 import store from './store'
 import messagePlugin from './utils/message.plugin'
 import 'materialize-css/dist/js/materialize.min.js'
+import tooltipDirective from '@/directives/tooltip.directive'
+
 import { initializeApp } from 'firebase/app'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import Loader from '@/components/app/Loader'
@@ -27,6 +29,7 @@ onAuthStateChanged(auth, (user) => {
       .use(store)
       .use(router)
       .use(messagePlugin)
+      .directive('tooltip', tooltipDirective)
       .component('Loader', Loader)
       .mount('#app')
   }
