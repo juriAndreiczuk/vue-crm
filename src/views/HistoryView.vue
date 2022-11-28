@@ -7,37 +7,46 @@
     <div class="history-chart">
       <canvas></canvas>
     </div>
-
-    <section>
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Summary</th>
-            <th>Date</th>
-            <th>Category</th>
-            <th>Type</th>
-            <th>Open</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td>1212</td>
-            <td>12.12.32</td>
-            <td>name</td>
-            <td>
-              <span class="white-text badge red">Consunption</span>
-            </td>
-            <td>
-              <button class="btn-small btn">
-                <i class="material-icons">open_in_new</i>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <Loader v-if="loading" />
+    <p 
+      v-else-if="!records.length"
+      class="center"
+    >
+      Records not found. <router-link to="/record">Add new</router-link>
+  </p>
+    <section v-else>
+      <HistoryTable
+        :history-records="records"
+      />
     </section>
   </div>
 </template>
+
+<script>
+  import HistoryTable from '@/components/history/HistoryTable'
+  export default {
+    name: 'History',
+    data() {
+      return {
+        loading: true,
+        records: [],
+        categories: []
+      }
+    },  
+    async mounted() {
+      try {
+        const records = await this.$store.dispatch('fetchRecords')
+        this.categories = await this.$store.dispatch('fetchCategories')
+        this.records = records.map(record => ({
+          ...record,
+          categoryName: this.categories.find(category => category.key === record.categoryId).title,
+          typeClass: record.type === 'income' ? 'green' : 'red'
+        }))
+        this.loading = false
+      } catch(e) {}
+    },
+    components: {
+      HistoryTable
+    }
+  }
+</script>

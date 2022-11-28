@@ -45,7 +45,7 @@ const routes = [
     component: import('@/views/RecordView.vue')
   },
   {
-    path: '/detail',
+    path: '/detail/:id',
     name: 'detail',
     meta: { 
       layout: 'main-layout',
