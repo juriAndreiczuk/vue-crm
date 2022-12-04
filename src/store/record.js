@@ -37,6 +37,21 @@ export default {
         commit('setError', e)
         throw error
       }
+    },
+    async fetchRecordById({dispatch, commit}, id) {
+      try {
+        const uid = await dispatch('getUid')
+        const db = ref(getDatabase())
+        const record = await get(child(db, `users/${uid}/records/${id}`))
+        if(record.val()) {
+          return { ...record.val(), id }
+        } else {
+          return []
+        }
+      } catch(e) {
+        commit('setError', e)
+        throw error
+      }
     }
   }
 }

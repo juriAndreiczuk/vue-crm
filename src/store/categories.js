@@ -34,6 +34,16 @@ export default {
         return []
       }
     },
+    async fetchCategoryById({commit, dispatch}, id) {
+      const uid = await dispatch('getUid')
+      const db = ref(getDatabase())
+      const category = await get(child(db, `users/${uid}/categories/${id}`))
+      if(category.val()) {
+        return { ...category.val(), id }
+      } else {
+        return []
+      }
+    },
     async updateCategory({commit, dispatch}, {title, limit, key}) {
       try {
         const uid = await dispatch('getUid')
