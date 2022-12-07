@@ -3,7 +3,6 @@
     <div class="nav-wrapper">
       <div class="navbar-left">
         <a 
-          href="#" 
           @click.prevent="$emit('buttonAction')"
         >
           <i class="material-icons black-text">dehaze</i>

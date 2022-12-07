@@ -49,7 +49,7 @@ const routes = [
     name: 'detail',
     meta: { 
       layout: 'main-layout',
-      sidebar: true,
+      sidebar: false,
       auth: true
      },
     component: import('@/views/DetailView.vue')
