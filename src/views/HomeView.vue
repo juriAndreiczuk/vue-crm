@@ -2,7 +2,7 @@
   <div>
     <div class="page-title">
       <h3>Account</h3>
-      <button 
+      <button
         @click="loadInfo()"
         class="btn waves-effect waves-light btn-small"
       >
@@ -11,10 +11,7 @@
     </div>
     <Loader v-if="loading" />
     <div v-else class="row">
-      <HomeBill 
-        :bill-base="currency.base"
-        :bill-rates="currency.rates"
-      />
+      <HomeBill :bill-base="currency.base" :bill-rates="currency.rates" />
       <HomeCurrency
         :currency-rates="currency.rates"
         :currency-date="currency.date"
@@ -28,7 +25,7 @@ import HomeBill from '@/components/home/HomeBill'
 import HomeCurrency from '@/components/home/HomeCurrency'
 
 export default {
-  name: "HomeView",
+  name: 'HomeView',
   data() {
     return {
       loading: true,
@@ -49,5 +46,5 @@ export default {
     HomeBill,
     HomeCurrency
   }
-};
+}
 </script>

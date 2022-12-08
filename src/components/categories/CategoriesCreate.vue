@@ -7,27 +7,30 @@
 
       <form @submit.prevent="onSubmit">
         <div class="input-field">
-          <input 
-            id="name" 
+          <input
+            id="name"
             type="text"
             v-model="title"
             :class="{
-              'invalid' : v$.title.$dirty && v$.title.required.$invalid
+              invalid: v$.title.$dirty && v$.title.required.$invalid
             }"
           />
           <label for="name">Title</label>
           <span
             v-if="v$.title.$dirty && v$.title.required.$invalid"
             class="helper-text invalid"
-          >Enter the title</span>
+            >Enter the title</span
+          >
         </div>
 
         <div class="input-field">
           <input
             id="limit"
-            type="number" 
+            type="number"
             :class="{
-              'invalid' : (v$.limit.$dirty && v$.limit.required.$invalid) || (v$.limit.$dirty && v$.limit.$invalid)
+              invalid:
+                (v$.limit.$dirty && v$.limit.required.$invalid) ||
+                (v$.limit.$dirty && v$.limit.$invalid)
             }"
             v-model.number="limit"
           />
@@ -51,7 +54,7 @@
 
 <script>
 import { useVuelidate } from '@vuelidate/core'
-import { required, minValue} from '@vuelidate/validators'
+import { required, minValue } from '@vuelidate/validators'
 import messages from '@/utils/messages'
 export default {
   emits: ['created'],
@@ -72,7 +75,7 @@ export default {
   methods: {
     async onSubmit() {
       const isFormCorrect = await this.v$.$validate()
-      if(!isFormCorrect) return false
+      if (!isFormCorrect) return false
       try {
         const category = await this.$store.dispatch('createCategory', {
           title: this.title,
@@ -83,7 +86,7 @@ export default {
         this.v$.$reset()
         this.$emit('created', category)
         this.$message('category has been created')
-      } catch(e) {}
+      } catch (e) {}
     }
   },
   mounted() {
