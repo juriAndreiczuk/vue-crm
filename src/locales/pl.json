@@ -1,0 +1,15 @@
+{
+  "profileTitle": "Konto",
+  "Name": "Imie",
+  "EnterName": "Wpisz imie",
+  "Refresh": "Aktualizuj",
+  "home": "główna",
+  "register": "rejestracja",
+  "login": "logowanie",
+  "categories": "kategorie",
+  "record": "wpis",
+  "detail": "szczegóły",
+  "profile": "konto",
+  "planning": "planowanie",
+  "history": "historia"
+}

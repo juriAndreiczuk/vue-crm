@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="page-title">
-      <h3>Account</h3>
+      <h3>{{ localizeFilter('profileTitle') }}</h3>
     </div>
     <form class="form" @submit.prevent="onSubmit">
       <div class="input-field">
@@ -12,25 +12,25 @@
             invalid: v$.name.$dirty && v$.name.required.$invalid
           }"
         />
-        <label for="name">Name</label>
+        <label for="name">{{ localizeFilter('Name') }}</label>
         <span
           v-if="v$.name.$dirty && v$.name.$invalid"
           class="helper-text invalid"
         >
-          Enter Name
+          {{ localizeFilter('EnterName') }}
         </span>
       </div>
       <div class="switch">
         <label>
           Polish
-          <input type="checkbox" />
+          <input type="checkbox" v-model="isEnLocale" />
           <span class="lever"></span>
           English
         </label>
       </div>
       <br />
       <button class="btn waves-effect waves-light" type="submit">
-        Refresh
+        {{ localizeFilter('Refresh') }}
         <i class="material-icons right">send</i>
       </button>
     </form>
@@ -42,12 +42,14 @@ import { mapGetters, mapActions } from 'vuex'
 import { useVuelidate } from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 import messages from '@/utils/messages'
+import localize from '@/mixins/localize'
 export default {
-  mixins: [messages],
+  mixins: [messages, localize],
   data() {
     return {
       v$: useVuelidate(),
-      name: ''
+      name: '',
+      isEnLocale: true
     }
   },
   computed: {
@@ -64,7 +66,10 @@ export default {
       const isFormCorrect = await this.v$.$validate()
       if (!isFormCorrect) return false
       try {
-        await this.updateInfo({ name: this.name })
+        await this.updateInfo({
+          name: this.name,
+          locale: this.isEnLocale ? 'en-EN' : 'pl-PL'
+        })
       } catch (e) {
         this.$message('error')
       }
@@ -72,6 +77,7 @@ export default {
   },
   mounted() {
     this.name = this.info.name
+    this.isEnLocale = this.info.locale === 'en-EN'
     setTimeout(() => {
       M.updateTextFields()
     }, 0)

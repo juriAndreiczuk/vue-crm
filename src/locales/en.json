@@ -1,0 +1,15 @@
+{
+  "profileTitle": "Account",
+  "Name": "Name",
+  "EnterName": "EnterName",
+  "Refresh": "Refresh",
+  "home": "home",
+  "register": "register",
+  "login": "login",
+  "categories": "categories",
+  "record": "record",
+  "detail": "detail",
+  "profile": "profile",
+  "planning": "planning",
+  "history": "history"
+}

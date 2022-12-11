@@ -1,4 +1,4 @@
-const dateFilter = {
+export default {
   methods: {
     dateFilter(value, format = 'date') {
       const options = {}
@@ -13,9 +13,7 @@ const dateFilter = {
         options.minute = '2-digit'
         options.second = '2-digit'
       }
-      return new Intl.DateTimeFormat('pl-PL', options).format(new Date(value))
+      return new Intl.DateTimeFormat( this.$store.getters.info.locale || 'en-EN', options).format(new Date(value))
     }
   }
 }
-
-export default dateFilter

@@ -1,18 +1,13 @@
 <template>
-  <ul
-    class="sidenav app-sidenav"
-    :class="{'open' : !modelValue}"
-  >
-    <template v-for="route of $router.options.routes ">
-      <li 
+  <ul class="sidenav app-sidenav" :class="{ open: !modelValue }">
+    <template v-for="route of $router.options.routes">
+      <li
         :key="route.name"
-        :class="{'active' : route.path === $route.fullPath}"
+        :class="{ active: route.path === $route.fullPath }"
         v-if="route.meta.sidebar"
       >
-        <router-link
-          :to="route.path"
-          class="waves-effect waves-orange pointer">
-          {{route.name}}
+        <router-link :to="route.path" class="waves-effect waves-orange pointer">
+          {{ localizeFilter(route.name) }}
         </router-link>
       </li>
     </template>
@@ -20,7 +15,9 @@
 </template>
 
 <script>
+import localize from '@/mixins/localize'
 export default {
-  props: ['modelValue']
+  props: ['modelValue'],
+  mixins: [localize]
 }
 </script>
