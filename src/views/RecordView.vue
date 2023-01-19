@@ -1,6 +1,87 @@
+
+<script setup>
+import { useVuelidate } from '@vuelidate/core'
+import { required, minValue } from '@vuelidate/validators'
+import { useMessage } from '@/use/message'
+import { reactive, ref, computed, onMounted, onUnmounted } from 'vue'
+import { useStore } from 'vuex'
+
+const store = useStore()
+
+const selectTag = ref(null)
+const loading = ref(true) 
+const categories = ref([])
+const select = ref(null)
+const currentCategory = ref(null)
+const recordType = ref('consumption')
+
+const state = reactive({
+  amount: 1,
+  description: ''
+})
+
+const rules = {
+  amount: { minValue: minValue(1), required },
+  description: { required }
+}
+
+const v$ = useVuelidate(rules, state)
+
+const canCreateRecord = computed(()=> {
+  if(recordType.value === 'income') {
+    return true
+  }
+  return store.getters.info.bill >= state.amount
+})
+
+const onSubmit = async () => {
+  const isFormCorrect = await v$.value.$validate()
+  if(!isFormCorrect) return false
+  if(canCreateRecord) {
+    try {
+      await store.dispatch('createRecord', {
+        categoryId: currentCategory.value,
+        type: recordType.value, 
+        amount: state.amount,
+        description: state.description,
+        date: new Date().toJSON()
+      })
+      const bill = recordType.value === 'income'
+        ? store.getters.info.bill + state.amount
+        : store.getters.info.bill - state.amount
+      
+      await store.dispatch('updateInfo', {bill})
+      useMessage('created')
+      v$.value.$reset()
+      state.amount = 1
+      state.description = ''
+    } catch(e) {}
+  } else {
+    useMessage('not enought money')
+  }
+}
+
+onMounted(async () => {
+  categories.value = await store.dispatch('fetchCategories')
+  loading.value = false
+  if(categories.value.length) {
+    currentCategory.value = categories.value[0].key
+  }
+  setTimeout(() => {
+    select.value = M.FormSelect.init(selectTag.value)
+    M.updateTextFields()
+  }, 0)
+})
+
+onUnmounted(() => {
+  if (select.value &&  select.value.destroy) {
+    select.value.destroy()
+  }
+})
+</script>
+
 <template>
   <div>
-    
     <div class="page-title">
       <h3>New record</h3>
     </div>
@@ -15,7 +96,7 @@
       @submit.prevent="onSubmit"
     >
       <div class="input-field">
-        <select ref="select" v-model="currentCategory">
+        <select ref="selectTag" v-model="currentCategory">
           <option
             v-for="category of categories"
             :key="category.key"
@@ -30,7 +111,7 @@
       <p>
         <label>
           <input 
-            v-model="type"
+            v-model="recordType"
             class="with-gap"
             name="type"
             type="radio"
@@ -43,7 +124,7 @@
       <p>
         <label>
           <input 
-            v-model="type"
+            v-model="recordType"
             class="with-gap"
             name="type"
             type="radio"
@@ -57,7 +138,7 @@
         <input 
           id="amount"
           type="number"
-          v-model.number="amount"
+          v-model.number="state.amount"
           :class="{
             'invalid' : (v$.amount.$dirty && v$.amount.required.$invalid) || (v$.amount.$dirty && v$.amount.$invalid)
           }"
@@ -75,7 +156,7 @@
         <input 
           id="description"
           type="text"
-          v-model="description"
+          v-model="state.description"
           :class="{
             'invalid' : v$.description.$dirty && v$.description.required.$invalid
           }"
@@ -96,83 +177,3 @@
     </form>
   </div>
 </template>
-
-<script>
-  import { useVuelidate } from '@vuelidate/core'
-  import messages from '@/utils/messages'
-  import { required, minValue } from '@vuelidate/validators'
-  export default {
-    name: 'record',
-    mixins: [messages],
-    data() {
-      return {
-        v$: useVuelidate(),
-        loading: true,
-        select: null,
-        categories: [],
-        currentCategory: null,
-        type: 'consumption',
-        amount: 1,
-        description: ''
-      }
-    },
-    validations() {
-      return {
-        description: { required },
-        amount: { minValue: minValue(1), required }
-      }
-    },
-    computed: {
-      canCreateRecord() {
-        if(this.type === 'income') {
-          return true
-        }
-        return this.$store.getters.info.bill >= this.amount
-      }
-    },
-    methods: {
-      async onSubmit() {
-        const isFormCorrect = await this.v$.$validate()
-        if(!isFormCorrect) return false
-        if(this.canCreateRecord) {
-          try {
-            await this.$store.dispatch('createRecord', {
-              categoryId: this.currentCategory,
-              type: this.type, 
-              amount: this.amount,
-              description: this.description,
-              date: new Date().toJSON()
-            })
-            const bill = this.type === 'income'
-              ? this.$store.getters.info.bill + this.amount
-              : this.$store.getters.info.bill - this.amount
-            
-            await this.$store.dispatch('updateInfo', {bill})
-            this.$message('created')
-            this.v$.$reset()
-            this.amount = 1
-            this.description = ''
-          } catch(e) {}
-        } else {
-          this.$message('not enought money')
-        }
-      }
-    },
-    async mounted() {
-      this.categories = await this.$store.dispatch('fetchCategories')
-      this.loading = false
-      if(this.categories.length) {
-        this.currentCategory = this.categories[0].key
-      }
-      setTimeout(() => {
-        this.select = M.FormSelect.init(this.$refs.select)
-        M.updateTextFields()
-      }, 0)
-    },
-    unmounted() {
-      if (this.select &&  this.select.destroy) {
-        this.select.destroy()
-      }
-    }
-  }
-</script>

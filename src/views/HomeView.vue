@@ -1,3 +1,25 @@
+<script setup>
+import HomeBill from '@/components/home/HomeBill'
+import HomeCurrency from '@/components/home/HomeCurrency'
+import { ref, onMounted } from 'vue'
+import { useStore } from 'vuex'
+
+const store = useStore()
+
+const loading = ref(true)
+const currency = ref(null)
+
+const loadInfo = async () => {
+  loading.value = true
+  currency.value = await store.dispatch('fetchCurrency')
+  loading.value = false
+}
+
+onMounted(async () => {
+  loadInfo()
+})
+</script>
+
 <template>
   <div>
     <div class="page-title">
@@ -19,32 +41,3 @@
     </div>
   </div>
 </template>
-
-<script>
-import HomeBill from '@/components/home/HomeBill'
-import HomeCurrency from '@/components/home/HomeCurrency'
-
-export default {
-  name: 'HomeView',
-  data() {
-    return {
-      loading: true,
-      currency: null
-    }
-  },
-  methods: {
-    async loadInfo() {
-      this.loading = true
-      this.currency = await this.$store.dispatch('fetchCurrency')
-      this.loading = false
-    }
-  },
-  async mounted() {
-    this.loadInfo()
-  },
-  components: {
-    HomeBill,
-    HomeCurrency
-  }
-}
-</script>

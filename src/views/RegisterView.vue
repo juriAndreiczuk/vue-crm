@@ -99,45 +99,41 @@
   </form>
 </template>
 
-<script>
-  import useVuelidate from '@vuelidate/core'
-  import {required, email, minLength} from '@vuelidate/validators'
+<script setup>
+import useVuelidate from '@vuelidate/core'
+import {required, email, minLength} from '@vuelidate/validators'
+import { reactive } from 'vue'
+import { useStore } from 'vue'
 
-  export default {
-    name: 'registration',
-    data() {
-      return {
-        v$: useVuelidate(),
-        email: '',
-        name: '',
-        password: '',
-        agreements: false
-      }
-    },
-    validations() {
-      return {
-        email: {email, required},
-        password: {required, minLength: minLength(5)},
-        name: {required, minLength: minLength(3)},
-        agreements: { checked: v => v }
-      }
-    },
-    methods: {
-      async onSubmit () {
-        const isFormCorrect = await this.v$.$validate()
-        if (!isFormCorrect) return
-        const formData = { 
-          email: this.email,
-          password: this.password,
-          name: this.name
-        }
-        try {
-          await this.$store.dispatch('register', formData)
-          this.$router.push('/login')
-        } catch(e) {
-          console.log(e)
-        }
-      }
-    }
+const state = reactive({
+  email: '',
+  name: '',
+  password: '',
+  agreements: false
+})
+
+const rules = {
+  email: {email, required},
+  password: {required, minLength: minLength(5)},
+  name: {required, minLength: minLength(3)},
+  agreements: { checked: v => v }
+}
+
+const v$ = useVuelidate(rules, state)
+
+const onSubmit = async () => {
+  const isFormCorrect = v$.value.$validate()
+  if (!isFormCorrect) return
+  const formData = { 
+    email: state.email,
+    password: state.password,
+    name: state.name
   }
+  try {
+    await store.dispatch('register', formData)
+    router.push('/login')
+  } catch(e) {
+    console.log(e)
+  }
+}
 </script>

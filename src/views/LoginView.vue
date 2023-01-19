@@ -1,3 +1,49 @@
+<script setup>
+import { useVuelidate } from '@vuelidate/core'
+import { required, email, minLength} from '@vuelidate/validators'
+import messages from '@/utils/messages'
+import { useMessage } from '@/use/message'
+import { reactive, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute, useRouter } from 'vue-router'
+
+const route = useRoute()
+const router = useRouter()
+const store = useStore()
+
+const state = reactive({
+  email: '',
+  password: ''
+})
+
+const rules = {
+  email: { required, email },
+  password: { required, minLength: minLength(5) }
+}
+
+const v$ = useVuelidate(rules, state)
+
+const onSubmit = async () =>  {
+  const isFormCorrect = await v$.value.$validate()
+  if (!isFormCorrect) return false
+  const formData = { 
+    email: state.email,
+    password: state.password
+  }
+  try {
+    const login = await store.dispatch('login', formData)
+    store.dispatch('getUid')
+    router.push('/')
+  } catch (e) { }
+}
+
+onMounted(() => {
+  if(messages[route.query.message]) {
+    useMessage(messages[route.query.message])
+  }
+})
+</script>
+
 <template>
   <form class="card auth-card" @submit.prevent="onSubmit">
     <div class="card-content">
@@ -6,7 +52,7 @@
         <input
           id="email"
           type="text"
-          v-model.trim="email"
+          v-model.trim="state.email"
           :class="{
             'invalid' : (v$.email.$dirty && v$.email.$invalid) || (v$.email.$dirty && v$.email.required.$invalid)
           }
@@ -30,7 +76,7 @@
         <input 
           id="password"
           type="password" 
-          v-model="password"
+          v-model="state.password"
           :class="{'invalid' : (v$.password.$dirty && v$.password.$invalid) || (v$.password.$dirty && v$.password.required.$invalid) }"
         />
         <label for="password">Password</label>
@@ -63,46 +109,3 @@
     </div>
   </form>
 </template>
-
-<script>
-  import { useVuelidate } from '@vuelidate/core'
-  import { required, email, minLength} from '@vuelidate/validators'
-  import messages from '@/utils/messages'
-
-  export default {
-    name: 'login',
-    data() {
-      return {
-        v$: useVuelidate(),
-        email: '',
-        password: ''
-      }
-    },
-    validations() {
-      return {
-        email: { required, email },
-        password: { required, minLength: minLength(5) }
-      }
-    },
-    methods: {
-      async onSubmit () {
-        const isFormCorrect = await this.v$.$validate()
-        if (!isFormCorrect) return false
-        const formData = { 
-          email: this.email,
-          password: this.password
-        }
-        try {
-          const login = await this.$store.dispatch('login', formData)
-          this.$store.dispatch('getUid')
-          this.$router.push('/')
-        } catch (e) { }
-      }
-    },
-    mounted() {
-      if(messages[this.$route.query.message]) {
-        this.$message(messages[this.$route.query.message])
-      }
-    }
-  }
-</script>

@@ -7,7 +7,7 @@
         v-if="route.meta.sidebar"
       >
         <router-link :to="route.path" class="waves-effect waves-orange pointer">
-          {{ localizeFilter(route.name) }}
+          {{route.name}}
         </router-link>
       </li>
     </template>

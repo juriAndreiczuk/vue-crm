@@ -1,3 +1,31 @@
+<script setup>
+import CategoriesCreate from '@/components/categories/CategoriesCreate'
+import CategoriesEdit from '@/components/categories/CategoriesEdit'
+
+import { ref, onMounted } from 'vue'
+import { useStore } from 'vuex'
+  const categories = ref([])
+  const loading = ref(true)
+  const updateCount = ref(0)
+
+  const store = useStore()
+
+  const addNewCategory = category => {
+    categories.value.push(category)
+  }
+
+  const updateCategories = val => {
+    const index = categories.value.findIndex(cat => cat.id === val.id)
+    categories.value[index] = val
+    updateCount.value += 1;
+  }
+
+  onMounted(async ()  => {
+    categories.value = await store.dispatch('fetchCategories')
+    loading.value = false
+  })
+</script>
+
 <template>
   <div>
     <div class="page-title">
@@ -21,36 +49,3 @@
     </section>
   </div>
 </template>
-
-<script>
-import CategoriesCreate from '@/components/categories/CategoriesCreate'
-import CategoriesEdit from '@/components/categories/CategoriesEdit'
-
-export default {
-  data() {
-    return {
-      categories: [],
-      loading: true,
-      updateCount: 0
-    }
-  },
-  methods: {
-    addNewCategory(category) {
-      this.categories.push(category)
-    },
-    updateCategories(val) {
-      const index = this.categories.findIndex(cat => cat.id === val.id)
-      this.categories[index] = val
-      this.updateCount += 1;
-    }
-  },
-  async mounted() {
-    this.categories = await this.$store.dispatch('fetchCategories')
-    this.loading = false
-  },
-  components: {
-    CategoriesCreate,
-    CategoriesEdit
-  }
-}
-</script>

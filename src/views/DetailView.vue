@@ -1,3 +1,27 @@
+<script setup>
+import { ref, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+import { useDateFilter } from '@/use/dateFilter'
+
+const store = useStore()
+const route = useRoute()
+
+const record = ref(null)
+const loading = ref(true)
+
+onMounted(async () => {
+  const id = route.params.id
+  const currentRecord = await store.dispatch('fetchRecordById', id)
+  const category = await store.dispatch('fetchCategoryById', currentRecord.categoryId)
+  record.value = {
+    ...currentRecord,
+    categoryName: category.title
+  }
+  loading.value = false
+})
+</script>
+
 <template>
   <div>
     <Loader v-if="loading" />
@@ -17,7 +41,7 @@
               <p>Amount: {{record.amount}}</p>
               <p>Category: {{record.categoryName}}</p>
 
-              <small>{{dateFilter(record.date)}}</small>
+              <small>{{useDateFilter(record.date)}}</small>
             </div>
           </div>
         </div>
@@ -26,28 +50,3 @@
     <p  v-else class="center">Record not found</p>
   </div>
 </template>
-
-<script>
-  import dateFilter from '@/mixins/dateFilter'
-  export default {
-    mixins: [dateFilter],
-    name: 'detail',
-    data() {
-      return {
-        record: null,
-        loading: true,
-        
-      }
-    },
-    async mounted() {
-      const id = this.$route.params.id
-      const record = await this.$store.dispatch('fetchRecordById', id)
-      const category = await this.$store.dispatch('fetchCategoryById', record.categoryId)
-      this.record = {
-        ...record,
-        categoryName: category.title
-      }
-      this.loading = false
-    }
-  }
-</script>
