@@ -1,3 +1,19 @@
+<script setup>
+import { defineProps } from 'vue'
+import { useStore } from 'vuex'
+
+const store = useStore()
+
+const props = defineProps({
+  billRates: Object,
+  billBase: String,
+})
+
+const getCurrency = currency => Math.floor(
+  store.getters.info.bill * props.billRates[currency]
+)
+</script>
+
 <template>
   <div class="col s12 m6 l4">
     <div class="card light-blue bill-card">
@@ -16,18 +32,3 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    billRates: Object,
-    billBase: String,
-  },
-  methods: {
-    getCurrency(currency) {
-      return Math.floor(
-        this.$store.getters.info.bill * this.billRates[currency]
-      )
-    }
-  }
-}
-</script>

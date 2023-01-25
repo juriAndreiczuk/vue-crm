@@ -1,3 +1,40 @@
+<script setup>
+import { useDateFilter } from '@/use/dateFilter'
+import { ref, computed, reactive, onMounted, onBeforeUnmount } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+
+const store = useStore()
+const router = useRouter()
+
+const date = ref(new Date())
+const timer = ref(null)
+const dropdown = ref(null)
+const trigger = ref(null)
+const list = ref(null)
+
+const name = computed(() => store.getters.info.name)
+
+const logout = async () => {
+  await store.dispatch('logout')
+  router.push('login?message=logout')
+}
+
+onMounted(() => {
+  dropdown.value = M.Dropdown.init(trigger.value, list.value)
+  timer.value = setInterval(() => {
+    date.value = new Date()
+  }, 1000)
+})
+
+onBeforeUnmount(() => {
+  clearInterval(timer)
+  if (dropdown.value && dropdown.value.destroy) {
+    dropdown.value.destroy()
+  }
+})
+</script>
+
 <template>
   <nav class="navbar orange lighten-1">
     <div class="nav-wrapper">
@@ -7,7 +44,7 @@
         >
           <i class="material-icons black-text">dehaze</i>
         </a>
-        <span class="black-text">{{dateFilter(date, 'datetime')}}</span>
+        <span class="black-text">{{useDateFilter(date, 'datetime')}}</span>
       </div>
 
       <ul class="right hide-on-small-and-down">
@@ -48,41 +85,3 @@
     </div>
   </nav>
 </template>
-
-<script>
-import dateFilter from '@/mixins/dateFilter'
-
-export default {
-  mixins: [dateFilter],
-  data() {
-    return {
-      date: new Date(),
-      timer: null,
-      dropdown: null
-    }
-  },
-  computed: {
-    name(){
-      return this.$store.getters.info.name
-    }
-  },
-  methods: {
-    async logout() {
-      await this.$store.dispatch('logout')
-      this.$router.push('login?message=logout')
-    }
-  },
-  mounted() {
-    this.dropdown = M.Dropdown.init(this.$refs.trigger, this.$refs.list),
-    this.timer = setInterval(() => {
-      this.date = new Date()
-    }, 1000)
-  },
-  beforeUnmount() {
-    clearInterval(this.timer)
-    if (this.dropdown && this.dropdown.destroy) {
-      this.dropdown.destroy()
-    }
-  }
-}
-</script>

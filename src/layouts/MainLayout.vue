@@ -22,38 +22,22 @@
   </div>
 </template>
 
-<script>
-  import Navbar from '@/components/app/Navbar';
-  import Sidebar from '@/components/app/Sidebar';
+<script setup>
+import { onMounted, ref } from 'vue'
+import { useError } from '@/use/error'
+import Navbar from '@/components/app/Navbar'
+import Sidebar from '@/components/app/Sidebar'
+import { useStore } from 'vuex'
 
-  export default {
-    name: 'main-layout',
-    data() {
-      return {
-        isOpen: true
-      }
-    },
-    async mounted() {
-      if (!Object.keys(this.$store.getters.info).length) {
-        await this.$store.dispatch('fetchInfo')
-      }
-    },
-    computed: {
-      error() {
-        return this.$store.getters.error
-      }
-    },
-    watch: {
-      error(e) {
-        if(e && e.message) {
-          this.$error(e.message)
-        }
-        this.$store.commit('clearError')
-      }
-    },
-    components: {
-      Navbar,
-      Sidebar
-    }
+const store = useStore()
+
+const isOpen = ref(true)
+
+useError()
+
+onMounted(async () => {
+  if (!Object.keys(store.getters.info).length) {
+    await store.dispatch('fetchInfo')
   }
+})
 </script>

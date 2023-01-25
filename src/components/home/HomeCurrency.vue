@@ -1,3 +1,13 @@
+<script setup>
+import { useDateFilter } from '@/use/dateFilter'
+import { defineProps } from 'vue'
+
+const props = defineProps({
+  currencyRates: Object,
+  currencyDate: String,
+})
+</script>
+
 <template>
   <div class="col s12 m6 l8">
     <div class="card orange darken-3 bill-card">
@@ -21,7 +31,7 @@
             >
               <td>{{currency}}</td>
               <td>{{currencyRates[currency].toFixed(3)}}</td>
-              <td>{{dateFilter(currencyDate)}}</td>
+              <td>{{useDateFilter(currencyDate)}}</td>
             </tr>
           </tbody>
         </table>
@@ -29,18 +39,3 @@
     </div>
   </div>
 </template>
-
-<script>
-import dateFilter from '@/mixins/dateFilter'
-
-export default {
-  mixins: [dateFilter],
-  props: {
-    currencyRates: Object,
-    currencyDate: String,
-  }
-}
-</script>
-
-<style>
-</style>

@@ -1,3 +1,15 @@
+<script setup>
+import { defineProps } from 'vue'
+import { useDateFilter } from '@/use/dateFilter'
+
+const props = defineProps({
+  historyRecords: {
+    required: true,
+    type: Array
+  }
+})
+</script>
+
 <template>
   <table>
     <thead>
@@ -18,7 +30,7 @@
       >
         <td>{{index}}</td>
         <td>{{record.amount}} PLN</td>
-        <td>{{dateFilter(record.date, 'datetime')}}</td>
+        <td>{{useDateFilter(record.date, 'datetime')}}</td>
         <td>{{record.categoryName}}</td>
         <td>
           <span
@@ -38,19 +50,3 @@
     </tbody>
   </table>
 </template>
-
-<script>
-import dateFilter from '@/mixins/dateFilter'
-export default {
-  mixins: [dateFilter],
-  props: {
-    historyRecords: {
-      required: true,
-      type: Array
-    }
-  }
-}
-</script>
-
-<style>
-</style>

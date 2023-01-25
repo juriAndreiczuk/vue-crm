@@ -1,3 +1,46 @@
+
+<script setup>
+import { reactive, defineEmits, onMounted} from 'vue'
+import { useVuelidate } from '@vuelidate/core'
+import { required, minValue } from '@vuelidate/validators'
+import { useStore } from 'vuex'
+import { useMessage } from '@/use/message'
+
+const store = useStore()
+const emit = defineEmits(['created'])
+
+const state = reactive({
+  title: '',
+  limit: 1
+})
+
+const rules = {
+  title: { required },
+  limit: { minValue: minValue(1), required }
+}
+const v$ = useVuelidate(rules, state)
+
+const onSubmit = async () =>  {
+  const isFormCorrect = await v$.value.$validate()
+  if (!isFormCorrect) return false
+  try {
+    const category = await store.dispatch('createCategory', {
+      title: state.title,
+      limit: state.limit
+    })
+    state.title = ''
+    state.limit = 1
+    this.v$.value.$reset()
+    emit('created', category)
+    useMessage('category has been created')
+  } catch (e) {}
+}
+
+onMounted(() => {
+  M.updateTextFields()
+})
+</script>
+
 <template>
   <div class="col s12 m6">
     <div>
@@ -10,7 +53,7 @@
           <input
             id="name"
             type="text"
-            v-model="title"
+            v-model="state.title"
             :class="{
               invalid: v$.title.$dirty && v$.title.required.$invalid
             }"
@@ -32,7 +75,7 @@
                 (v$.limit.$dirty && v$.limit.required.$invalid) ||
                 (v$.limit.$dirty && v$.limit.$invalid)
             }"
-            v-model.number="limit"
+            v-model.number="state.limit"
           />
           <label for="limit">Limit</label>
           <span
@@ -51,46 +94,3 @@
     </div>
   </div>
 </template>
-
-<script>
-import { useVuelidate } from '@vuelidate/core'
-import { required, minValue } from '@vuelidate/validators'
-import messages from '@/utils/messages'
-export default {
-  emits: ['created'],
-  mixins: [messages],
-  data() {
-    return {
-      v$: useVuelidate(),
-      title: '',
-      limit: 1
-    }
-  },
-  validations() {
-    return {
-      title: { required },
-      limit: { minValue: minValue(1), required }
-    }
-  },
-  methods: {
-    async onSubmit() {
-      const isFormCorrect = await this.v$.$validate()
-      if (!isFormCorrect) return false
-      try {
-        const category = await this.$store.dispatch('createCategory', {
-          title: this.title,
-          limit: this.limit
-        })
-        this.title = ''
-        this.limit = 1
-        this.v$.$reset()
-        this.$emit('created', category)
-        this.$message('category has been created')
-      } catch (e) {}
-    }
-  },
-  mounted() {
-    M.updateTextFields()
-  }
-}
-</script>

@@ -1,3 +1,68 @@
+<script setup>
+import { useVuelidate } from '@vuelidate/core'
+import { required, minValue } from '@vuelidate/validators'
+import { useMessage } from '@/use/message'
+import { defineProps, defineEmits, reactive, onMounted, ref, onUnmounted, watch } from 'vue'
+import { useStore } from 'vuex'
+
+const store = useStore()
+const emit = defineEmits('updateCategories')
+const props = defineProps({
+  categoriesList: Array
+})
+
+const selectTag = ref(null)
+const {title, key, limit} = props.categoriesList[0]
+
+const state = reactive({
+  title: title,
+  limit: limit,
+  select: null,
+  current: key
+})
+
+
+const rules = {
+  title: { required },
+  limit: { minValue: minValue(1), required }
+}
+
+const v$ = useVuelidate(rules, state)
+
+const onSubmit = async () => {
+  const isFormCorrect = await v$.value.$validate()
+  if(!isFormCorrect) return false  
+  try {
+    const categoryData = {
+      key: state.current,
+      title: state.title,
+      limit: state.limit,
+    }
+    await store.dispatch('updateCategory', categoryData)
+    useMessage('category has been changed')
+    emit('updateCategories', categoryData)
+  } catch(e) {}
+}
+
+
+onMounted(() => {
+  state.select = M.FormSelect.init(selectTag.value)
+  M.updateTextFields()
+})
+
+onUnmounted(() => {
+  if (state.select &&  state.select.destroy) {
+    state.select.destroy()
+  }
+})
+
+watch(state.current, val => {
+  const {title, limit } = props.categoriesList.find(cat => cat.key === val)
+  title.value = title
+  limit.value = limit
+}) 
+</script>
+
 <template>
   <div class="col s12 m6">
     <div>
@@ -6,7 +71,7 @@
       </div>
       <form @submit.prevent="onSubmit">
         <div class="input-field">
-          <select ref="select" v-model="current">
+          <select ref="selectTag" v-model="state.current">
             <option 
               v-for="category of categoriesList"
               :key="category.key"
@@ -19,7 +84,7 @@
         <div class="input-field">
           <input 
             id="name" type="text"
-            v-model="title"
+            v-model="state.title"
             :class="{
               'invalid' : v$.title.$dirty && v$.title.required.$invalid
             }"
@@ -38,7 +103,7 @@
             :class="{
               'invalid' : (v$.limit.$dirty && v$.limit.required.$invalid) || (v$.limit.$dirty && v$.limit.$invalid)
             }"
-            v-model.number="limit"
+            v-model.number="state.limit"
           />
           <label for="limit">Limit</label>
           <span
@@ -57,69 +122,3 @@
     </div>
   </div>
 </template>
-
-<script>
-import { useVuelidate } from '@vuelidate/core'
-import { required, minValue } from '@vuelidate/validators'
-import messages from '@/utils/messages'
-
-export default {
-  mixins: [messages],
-  props: {
-    categoriesList: Array
-  },
-  data() {
-    return {
-      v$: useVuelidate(),
-      title: '',
-      limit: 1,
-      select: null,
-      current: null
-    }
-  },
-  validations() {
-    return {
-      title: { required },
-      limit: { minValue: minValue(1), required }
-    }
-  },
-  methods: {
-    async onSubmit() {
-      const isFormCorrect = await this.v$.$validate()
-      if(!isFormCorrect) return false  
-      try {
-        const categoryData = {
-          key: this.current,
-          title: this.title,
-          limit: this.limit,
-        }
-        await this.$store.dispatch('updateCategory', categoryData)
-        this.$message('category has been changed')
-        this.$emit('updateCategories', categoryData)
-      } catch(e) {}
-    }
-  },
-  watch: {
-    current(val) {
-      const {title, limit } = this.categoriesList.find(cat => cat.key === val)
-      this.title = title
-      this.limit = limit
-    }
-  },
-  created() {
-    const {title, key, limit} = this.categoriesList[0]
-    this.current = key 
-    this.title = title
-    this.limit = limit
-  },
-  mounted() {
-    M.updateTextFields()
-    this.select = M.FormSelect.init(this.$refs.select)
-  },
-  unmounted() {
-    if (this.select &&  this.select.destroy) {
-      this.select.destroy()
-    }
-  }
-}
-</script>

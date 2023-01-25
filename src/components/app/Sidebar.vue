@@ -1,3 +1,8 @@
+<script setup>
+  import { defineProps } from 'vue'
+  const props = defineProps(['modelValue'])
+</script>
+
 <template>
   <ul class="sidenav app-sidenav" :class="{ open: !modelValue }">
     <template v-for="route of $router.options.routes">
@@ -13,11 +18,3 @@
     </template>
   </ul>
 </template>
-
-<script>
-import localize from '@/mixins/localize'
-export default {
-  props: ['modelValue'],
-  mixins: [localize]
-}
-</script>

@@ -22,7 +22,7 @@ const options = {
   databaseURL: 'https://crmvue-1f01e-default-rtdb.europe-west1.firebasedatabase.app'
 }
 const fireApp = initializeApp(options)
-const auth = getAuth();
+const auth = getAuth()
 onAuthStateChanged(auth, (user) => {
   if(!app) {
     app = createApp(App)
@@ -33,5 +33,5 @@ onAuthStateChanged(auth, (user) => {
       .component('Loader', Loader)
       .mount('#app')
   }
-});
+})
 
