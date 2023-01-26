@@ -21,7 +21,6 @@ const state = reactive({
   current: key
 })
 
-
 const rules = {
   title: { required },
   limit: { minValue: minValue(1), required }
@@ -43,7 +42,6 @@ const onSubmit = async () => {
     emit('updateCategories', categoryData)
   } catch(e) {}
 }
-
 
 onMounted(() => {
   state.select = M.FormSelect.init(selectTag.value)

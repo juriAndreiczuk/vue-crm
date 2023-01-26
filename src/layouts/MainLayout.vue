@@ -1,3 +1,23 @@
+<script setup>
+import { onMounted, ref } from 'vue'
+import { useError } from '@/use/error'
+import Navbar from '@/components/app/Navbar'
+import Sidebar from '@/components/app/Sidebar'
+import { useStore } from 'vuex'
+
+const store = useStore()
+
+const isOpen = ref(true)
+
+useError()
+
+onMounted(async () => {
+  if (!Object.keys(store.getters.info).length) {
+    await store.dispatch('fetchInfo')
+  }
+})
+</script>
+
 <template>
   <div class="app-main-layout">
     <Navbar @buttonAction="isOpen = !isOpen" />
@@ -21,23 +41,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import { onMounted, ref } from 'vue'
-import { useError } from '@/use/error'
-import Navbar from '@/components/app/Navbar'
-import Sidebar from '@/components/app/Sidebar'
-import { useStore } from 'vuex'
-
-const store = useStore()
-
-const isOpen = ref(true)
-
-useError()
-
-onMounted(async () => {
-  if (!Object.keys(store.getters.info).length) {
-    await store.dispatch('fetchInfo')
-  }
-})
-</script>
